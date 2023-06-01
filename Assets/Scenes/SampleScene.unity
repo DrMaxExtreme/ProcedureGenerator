@@ -154,32 +154,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1658093694}
   tilePrefab: {fileID: 5395567642169145267, guid: 5fc42b75391e69443a695f83a9197ae4, type: 3}
-  generationDistance: 30
+  generationDistance: 75
   deactivationDistance: 100
   tilePoolSize: 10000
-  zoom: 50
-  tileSprites:
-  - sprite: {fileID: 21300000, guid: 336769327d23cf847991f0d765833308, type: 3}
-    minValue: -1
-    maxValue: 0.08
-  - sprite: {fileID: 21300000, guid: a05333353029fe544956ae38a3054e04, type: 3}
-    minValue: 0.08
-    maxValue: 0.22
-  - sprite: {fileID: 21300000, guid: 84a91b6e801b5fe4385f9e9683ffbb88, type: 3}
-    minValue: 0.22
-    maxValue: 0.3
-  - sprite: {fileID: 21300000, guid: 511e4b092ed88d346b6ae97758fbef51, type: 3}
-    minValue: 0.3
-    maxValue: 0.38
-  - sprite: {fileID: 21300000, guid: aa14144c8a616e8458db3296e0558c2e, type: 3}
-    minValue: 0.38
-    maxValue: 0.6
-  - sprite: {fileID: 21300000, guid: e62c8428275b0184c8a5fdd0853da112, type: 3}
-    minValue: 0.6
-    maxValue: 0.85
-  - sprite: {fileID: 21300000, guid: 10f36107ba3dd6f41a4c9dc2f56701bb, type: 3}
-    minValue: 0.85
-    maxValue: 2
+  tileLayers:
+  - layerName: Water
+    seed: 0
+    zoom: 30
+    valueRanges:
+    - minValue: -1
+      maxValue: 0.015
+      sprite: {fileID: 21300000, guid: 336769327d23cf847991f0d765833308, type: 3}
+    - minValue: 0.015
+      maxValue: 0.1
+      sprite: {fileID: 21300000, guid: a05333353029fe544956ae38a3054e04, type: 3}
+    - minValue: 0.1
+      maxValue: 0.15
+      sprite: {fileID: 21300000, guid: 84a91b6e801b5fe4385f9e9683ffbb88, type: 3}
+  - layerName: ToxicGround
+    seed: 0
+    zoom: 150
+    valueRanges:
+    - minValue: -1
+      maxValue: 0.15
+      sprite: {fileID: 21300000, guid: ec90fed8097534446afd363c98231cff, type: 3}
+    - minValue: 0.85
+      maxValue: 2
+      sprite: {fileID: 21300000, guid: ec90fed8097534446afd363c98231cff, type: 3}
+  - layerName: Forest
+    seed: 0
+    zoom: 35
+    valueRanges:
+    - minValue: -1
+      maxValue: 0.25
+      sprite: {fileID: 21300000, guid: e62c8428275b0184c8a5fdd0853da112, type: 3}
+  - layerName: Rock
+    seed: 0
+    zoom: 30
+    valueRanges:
+    - minValue: -1
+      maxValue: 0.05
+      sprite: {fileID: 21300000, guid: 10f36107ba3dd6f41a4c9dc2f56701bb, type: 3}
+  - layerName: Sand
+    seed: 0
+    zoom: 60
+    valueRanges:
+    - minValue: -0.1
+      maxValue: 0.1
+      sprite: {fileID: 21300000, guid: 511e4b092ed88d346b6ae97758fbef51, type: 3}
+  - layerName: Ground
+    seed: 0
+    zoom: 45
+    valueRanges:
+    - minValue: -1
+      maxValue: 0.15
+      sprite: {fileID: 21300000, guid: 4a8b4f83703dd7d479aa769fa2728564, type: 3}
+  - layerName: Grass
+    seed: 0
+    zoom: 1
+    valueRanges:
+    - minValue: -1
+      maxValue: 2
+      sprite: {fileID: 21300000, guid: aa14144c8a616e8458db3296e0558c2e, type: 3}
 --- !u!4 &160321754
 Transform:
   m_ObjectHideFlags: 0
@@ -463,7 +499,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.49999943, y: 0.0012923029, z: -0.0007461113, w: 0.8660245}
-  m_LocalPosition: {x: 0.1, y: 10, z: -6}
+  m_LocalPosition: {x: 0.1, y: 100, z: -60}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -499,7 +535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1519a6359f3672d43a45d332a27a13b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 30
 --- !u!4 &1658093694
 Transform:
   m_ObjectHideFlags: 0

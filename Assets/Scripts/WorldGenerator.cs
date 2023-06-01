@@ -9,28 +9,33 @@ public class WorldGenerator : MonoBehaviour
     public float generationDistance = 10f;
     public float deactivationDistance = 30f;
     public int tilePoolSize = 1000;
-    public float zoom = 0.1f;
-
-    [System.Serializable]
-    public class TileSpriteData
-    {
-        public Sprite sprite;
-        public float minValue;
-        public float maxValue;
-    }
-
-    public List<TileSpriteData> tileSprites;
+    public List<TileLayerData> tileLayers;
 
     private List<GameObject> tilePool;
     private Dictionary<Vector3, GameObject> activeTiles;
     private Vector3 lastPlayerTilePosition;
     private Queue<GameObject> inactiveTiles = new Queue<GameObject>();
-    private float seed;
+
+    [System.Serializable]
+    public class TileLayerData
+    {
+        public string layerName;
+        [HideInInspector]
+        public float seed;
+        public float zoom;
+        public List<ValueRangeData> valueRanges;
+    }
+
+    [System.Serializable]
+    public class ValueRangeData
+    {
+        public float minValue;
+        public float maxValue;
+        public Sprite sprite;
+    }
 
     private void Start()
     {
-        seed = Random.Range(2500000f, 7500000f);
-
         tilePool = new List<GameObject>();
         activeTiles = new Dictionary<Vector3, GameObject>();
         lastPlayerTilePosition = Vector3.negativeInfinity;
@@ -77,31 +82,42 @@ public class WorldGenerator : MonoBehaviour
 
         if (currentPlayerIntPosition != WorldToTilePosition(lastPlayerTilePosition))
         {
-            for (int x = (int)currentPlayerIntPosition.x - (int)(distance * 2); x <= (int)currentPlayerIntPosition.x + (int)(distance * 2); x++)
+            float horizontalDistance = distance * 2;
+            float verticalDistance = distance;
+
+            foreach (TileLayerData layerData in tileLayers)
             {
-                for (int z = (int)currentPlayerIntPosition.z - (int)distance; z <= (int)currentPlayerIntPosition.z + (int)distance; z++)
+                if (layerData.seed == 0f)
                 {
-                    Vector3 tilePosition = new Vector3(x, 0, z);
+                    layerData.seed = Random.Range(2500000f, 7500000f);
+                }
 
-                    if (!activeTiles.ContainsKey(tilePosition))
+                for (int x = (int)currentPlayerIntPosition.x - (int)horizontalDistance; x <= (int)currentPlayerIntPosition.x + (int)horizontalDistance; x++)
+                {
+                    for (int z = (int)currentPlayerIntPosition.z - (int)verticalDistance; z <= (int)currentPlayerIntPosition.z + (int)verticalDistance; z++)
                     {
-                        float noiseValue = Mathf.PerlinNoise((tilePosition.x + seed) / zoom, (tilePosition.z + seed) / zoom);
+                        Vector3 tilePosition = new Vector3(x, 0, z);
 
-                        Sprite selectedSprite = null;
-                        foreach (TileSpriteData spriteData in tileSprites)
+                        if (!activeTiles.ContainsKey(tilePosition))
                         {
-                            if (noiseValue >= spriteData.minValue && noiseValue <= spriteData.maxValue)
+                            float noiseValue = Mathf.PerlinNoise((tilePosition.x + layerData.seed) / layerData.zoom, (tilePosition.z + layerData.seed) / layerData.zoom);
+                            Sprite selectedSprite = null;
+
+                            foreach (ValueRangeData valueRangeData in layerData.valueRanges)
                             {
-                                selectedSprite = spriteData.sprite;
-                                break;
+                                if (noiseValue >= valueRangeData.minValue && noiseValue <= valueRangeData.maxValue)
+                                {
+                                    selectedSprite = valueRangeData.sprite;
+                                    break;
+                                }
                             }
-                        }
 
-                        if (selectedSprite != null)
-                        {
-                            GameObject newTile = GetTileFromPool();
-                            PlaceTile(newTile, tilePosition, selectedSprite);
-                            activeTiles.Add(tilePosition, newTile);
+                            if (selectedSprite != null)
+                            {
+                                GameObject newTile = GetTileFromPool();
+                                PlaceTile(newTile, tilePosition, selectedSprite);
+                                activeTiles.Add(tilePosition, newTile);
+                            }
                         }
                     }
                 }
@@ -111,13 +127,17 @@ public class WorldGenerator : MonoBehaviour
 
     private void DeactivateTilesOutsideDistance()
     {
+        float horizontalDistance = deactivationDistance * 2;
+        float verticalDistance = deactivationDistance;
+
         List<Vector3> tilesToDeactivate = new List<Vector3>();
 
         foreach (KeyValuePair<Vector3, GameObject> tileEntry in activeTiles)
         {
             Vector3 tilePosition = tileEntry.Key;
 
-            if (Mathf.Abs(tilePosition.x - playerTransform.position.x) > deactivationDistance * 2 || Mathf.Abs(tilePosition.z - playerTransform.position.z) > deactivationDistance)
+            if (Mathf.Abs(tilePosition.x - playerTransform.position.x) > horizontalDistance ||
+                Mathf.Abs(tilePosition.z - playerTransform.position.z) > verticalDistance)
             {
                 tilesToDeactivate.Add(tilePosition);
             }
