@@ -157,65 +157,19 @@ MonoBehaviour:
   generationDistance: 75
   deactivationDistance: 100
   tilePoolSize: 10000
-  tileLayers:
-  - layerName: Water
+  biomes:
+  - biomeName: Lake
+    layers: []
     seed: 0
-    zoom: 30
-    valueRanges:
-    - minValue: -1
-      maxValue: 0.015
-      sprite: {fileID: 21300000, guid: 336769327d23cf847991f0d765833308, type: 3}
-    - minValue: 0.015
-      maxValue: 0.1
-      sprite: {fileID: 21300000, guid: a05333353029fe544956ae38a3054e04, type: 3}
-    - minValue: 0.1
-      maxValue: 0.15
-      sprite: {fileID: 21300000, guid: 84a91b6e801b5fe4385f9e9683ffbb88, type: 3}
-  - layerName: ToxicGround
+  - biomeName: Forest
+    layers: []
     seed: 0
-    zoom: 150
-    valueRanges:
-    - minValue: -1
-      maxValue: 0.15
-      sprite: {fileID: 21300000, guid: ec90fed8097534446afd363c98231cff, type: 3}
-    - minValue: 0.85
-      maxValue: 2
-      sprite: {fileID: 21300000, guid: ec90fed8097534446afd363c98231cff, type: 3}
-  - layerName: Forest
+  - biomeName: Standard
+    layers:
+    - zoom: 0
+      valueRanges: []
+      internalElements: []
     seed: 0
-    zoom: 35
-    valueRanges:
-    - minValue: -1
-      maxValue: 0.25
-      sprite: {fileID: 21300000, guid: e62c8428275b0184c8a5fdd0853da112, type: 3}
-  - layerName: Rock
-    seed: 0
-    zoom: 30
-    valueRanges:
-    - minValue: -1
-      maxValue: 0.05
-      sprite: {fileID: 21300000, guid: 10f36107ba3dd6f41a4c9dc2f56701bb, type: 3}
-  - layerName: Sand
-    seed: 0
-    zoom: 60
-    valueRanges:
-    - minValue: -0.1
-      maxValue: 0.1
-      sprite: {fileID: 21300000, guid: 511e4b092ed88d346b6ae97758fbef51, type: 3}
-  - layerName: Ground
-    seed: 0
-    zoom: 45
-    valueRanges:
-    - minValue: -1
-      maxValue: 0.15
-      sprite: {fileID: 21300000, guid: 4a8b4f83703dd7d479aa769fa2728564, type: 3}
-  - layerName: Grass
-    seed: 0
-    zoom: 1
-    valueRanges:
-    - minValue: -1
-      maxValue: 2
-      sprite: {fileID: 21300000, guid: aa14144c8a616e8458db3296e0558c2e, type: 3}
 --- !u!4 &160321754
 Transform:
   m_ObjectHideFlags: 0
