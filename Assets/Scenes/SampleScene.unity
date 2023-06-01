@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.1802834, g: 0.2257135, b: 0.3069223, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -154,10 +154,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1658093694}
   tilePrefab: {fileID: 5395567642169145267, guid: 5fc42b75391e69443a695f83a9197ae4, type: 3}
-  generationRadius: 75
-  deactivationRadius: 100
+  generationDistance: 30
+  deactivationDistance: 100
   tilePoolSize: 10000
-  zoom: 15
+  zoom: 50
   tileSprites:
   - sprite: {fileID: 21300000, guid: 336769327d23cf847991f0d765833308, type: 3}
     minValue: -1
@@ -223,7 +223,7 @@ Transform:
   m_GameObject: {fileID: 679298258}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1658093694}
@@ -463,7 +463,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.49999943, y: 0.0012923029, z: -0.0007461113, w: 0.8660245}
-  m_LocalPosition: {x: 0.1, y: 75, z: -45}
+  m_LocalPosition: {x: 0.1, y: 10, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1519a6359f3672d43a45d332a27a13b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 33
+  moveSpeed: 5
 --- !u!4 &1658093694
 Transform:
   m_ObjectHideFlags: 0

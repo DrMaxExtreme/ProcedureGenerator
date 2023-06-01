@@ -6,8 +6,8 @@ public class WorldGenerator : MonoBehaviour
 {
     public Transform playerTransform;
     public GameObject tilePrefab;
-    public float generationRadius = 10f;
-    public float deactivationRadius = 30f;
+    public float generationDistance = 10f;
+    public float deactivationDistance = 30f;
     public int tilePoolSize = 1000;
     public float zoom = 0.1f;
 
@@ -54,7 +54,7 @@ public class WorldGenerator : MonoBehaviour
         if (currentPlayerTilePosition != lastPlayerTilePosition)
         {
             GenerateTilesAroundPlayer();
-            DeactivateTilesOutsideRadius();
+            DeactivateTilesOutsideDistance();
             lastPlayerTilePosition = currentPlayerTilePosition;
         }
     }
@@ -62,49 +62,46 @@ public class WorldGenerator : MonoBehaviour
     private void GenerateInitialTiles()
     {
         Vector3 currentPlayerTilePosition = WorldToTilePosition(playerTransform.position);
-        GenerateTilesAroundPosition(currentPlayerTilePosition, generationRadius);
+        GenerateTilesAroundPosition(currentPlayerTilePosition, generationDistance);
     }
 
     private void GenerateTilesAroundPlayer()
     {
         Vector3 currentPlayerTilePosition = WorldToTilePosition(playerTransform.position);
-        GenerateTilesAroundPosition(currentPlayerTilePosition, generationRadius);
+        GenerateTilesAroundPosition(currentPlayerTilePosition, generationDistance);
     }
 
-    private void GenerateTilesAroundPosition(Vector3 position, float radius)
+    private void GenerateTilesAroundPosition(Vector3 position, float distance)
     {
         Vector3 currentPlayerIntPosition = new Vector3(Mathf.Floor(position.x), 0, Mathf.Floor(position.z));
 
         if (currentPlayerIntPosition != WorldToTilePosition(lastPlayerTilePosition))
         {
-            for (int x = (int)currentPlayerIntPosition.x - (int)radius; x <= (int)currentPlayerIntPosition.x + (int)radius; x++)
+            for (int x = (int)currentPlayerIntPosition.x - (int)(distance * 2); x <= (int)currentPlayerIntPosition.x + (int)(distance * 2); x++)
             {
-                for (int z = (int)currentPlayerIntPosition.z - (int)radius; z <= (int)currentPlayerIntPosition.z + (int)radius; z++)
+                for (int z = (int)currentPlayerIntPosition.z - (int)distance; z <= (int)currentPlayerIntPosition.z + (int)distance; z++)
                 {
                     Vector3 tilePosition = new Vector3(x, 0, z);
 
-                    if (Vector3.Distance(tilePosition, currentPlayerIntPosition) <= radius)
+                    if (!activeTiles.ContainsKey(tilePosition))
                     {
-                        if (!activeTiles.ContainsKey(tilePosition))
+                        float noiseValue = Mathf.PerlinNoise((tilePosition.x + seed) / zoom, (tilePosition.z + seed) / zoom);
+
+                        Sprite selectedSprite = null;
+                        foreach (TileSpriteData spriteData in tileSprites)
                         {
-                            float noiseValue = Mathf.PerlinNoise((tilePosition.x + seed) / zoom, (tilePosition.z + seed) / zoom);
-
-                            Sprite selectedSprite = null;
-                            foreach (TileSpriteData spriteData in tileSprites)
+                            if (noiseValue >= spriteData.minValue && noiseValue <= spriteData.maxValue)
                             {
-                                if (noiseValue >= spriteData.minValue && noiseValue <= spriteData.maxValue)
-                                {
-                                    selectedSprite = spriteData.sprite;
-                                    break;
-                                }
+                                selectedSprite = spriteData.sprite;
+                                break;
                             }
+                        }
 
-                            if (selectedSprite != null)
-                            {
-                                GameObject newTile = GetTileFromPool();
-                                PlaceTile(newTile, tilePosition, selectedSprite);
-                                activeTiles.Add(tilePosition, newTile);
-                            }
+                        if (selectedSprite != null)
+                        {
+                            GameObject newTile = GetTileFromPool();
+                            PlaceTile(newTile, tilePosition, selectedSprite);
+                            activeTiles.Add(tilePosition, newTile);
                         }
                     }
                 }
@@ -112,7 +109,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
-    private void DeactivateTilesOutsideRadius()
+    private void DeactivateTilesOutsideDistance()
     {
         List<Vector3> tilesToDeactivate = new List<Vector3>();
 
@@ -120,7 +117,7 @@ public class WorldGenerator : MonoBehaviour
         {
             Vector3 tilePosition = tileEntry.Key;
 
-            if (Vector3.Distance(tilePosition, playerTransform.position) > deactivationRadius)
+            if (Mathf.Abs(tilePosition.x - playerTransform.position.x) > deactivationDistance * 2 || Mathf.Abs(tilePosition.z - playerTransform.position.z) > deactivationDistance)
             {
                 tilesToDeactivate.Add(tilePosition);
             }
@@ -160,6 +157,7 @@ public class WorldGenerator : MonoBehaviour
         tile.SetActive(true);
         tile.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
+        // Set the sprite
         SpriteRenderer spriteRenderer = tile.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = sprite;
     }
