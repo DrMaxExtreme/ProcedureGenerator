@@ -45,7 +45,6 @@ public class WorldGenerator : MonoBehaviour
     [System.Serializable]
     public class InternalElementData
     {
-        public float zoom;
         public List<ValueRangeData> valueRanges;
     }
 
@@ -124,28 +123,22 @@ public class WorldGenerator : MonoBehaviour
                                 {
                                     float noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
 
-                                    Sprite selectedSprite = null;
                                     foreach (ValueRangeData valueRangeData in layerData.valueRanges)
                                     {
                                         if (noiseValue >= valueRangeData.minValue && noiseValue <= valueRangeData.maxValue)
                                         {
-                                            selectedSprite = valueRangeData.sprite;
-                                            break;
-                                        }
-                                    }
-
-                                    if (selectedSprite != null)
-                                    {
-                                        // Generate internal elements within the value range
-                                        foreach (ValueRangeData valueRange in internalElement.valueRanges)
-                                        {
-                                            if (noiseValue >= valueRange.minValue && noiseValue <= valueRange.maxValue)
+                                            // Generate internal elements within the value range
+                                            foreach (ValueRangeData valueRange in internalElement.valueRanges)
                                             {
-                                                GameObject newTile = GetTileFromPool();
-                                                PlaceTile(newTile, tilePosition, valueRange.sprite);
-                                                activeTiles.Add(tilePosition, newTile);
-                                                break;
+                                                if (noiseValue >= valueRange.minValue && noiseValue <= valueRange.maxValue)
+                                                {
+                                                    GameObject newTile = GetTileFromPool();
+                                                    PlaceTile(newTile, tilePosition, valueRange.sprite);
+                                                    activeTiles.Add(tilePosition, newTile);
+                                                    break;
+                                                }
                                             }
+                                            break;
                                         }
                                     }
                                 }
