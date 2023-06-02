@@ -30,8 +30,21 @@ public class WorldGenerator : MonoBehaviour
     public class LayerData
     {
         public float zoom;
-        public List<ValueRangeData> valueRanges;
+        public List<RangeSpriteData> valueRanges;
         public List<InternalElementData> internalElements;
+    }
+
+    [System.Serializable]
+    public class RangeSpriteData
+    {
+        public float minValue;
+        public float maxValue;
+    }
+
+    [System.Serializable]
+    public class InternalElementData
+    {
+        public List<ValueRangeData> valueRanges;
     }
 
     [System.Serializable]
@@ -40,12 +53,6 @@ public class WorldGenerator : MonoBehaviour
         public float minValue;
         public float maxValue;
         public Sprite sprite;
-    }
-
-    [System.Serializable]
-    public class InternalElementData
-    {
-        public List<ValueRangeData> valueRanges;
     }
 
     private void Start()
@@ -123,7 +130,7 @@ public class WorldGenerator : MonoBehaviour
                                 {
                                     float noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
 
-                                    foreach (ValueRangeData valueRangeData in layerData.valueRanges)
+                                    foreach (RangeSpriteData valueRangeData in layerData.valueRanges)
                                     {
                                         if (noiseValue >= valueRangeData.minValue && noiseValue <= valueRangeData.maxValue)
                                         {

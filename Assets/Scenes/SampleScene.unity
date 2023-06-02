@@ -154,21 +154,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1658093694}
   tilePrefab: {fileID: 5395567642169145267, guid: 5fc42b75391e69443a695f83a9197ae4, type: 3}
-  generationArea: {x: 64, y: 36}
+  generationDistance: 75
   deactivationDistance: 100
   tilePoolSize: 10000
-  layers:
-  - name: Ground
-    zoom: 300
-    minValue: -1
-    maxValue: 2
-    elements:
-    - minValue: -1
-      maxValue: 0.3
-      sprite: {fileID: 21300000, guid: a05333353029fe544956ae38a3054e04, type: 3}
-    - minValue: 0.3
-      maxValue: 2
-      sprite: {fileID: 21300000, guid: ed09b8e3236f5d342abb9b7b1c6207bb, type: 3}
+  biomes:
+  - biomeName: Ground
+    layers:
+    - zoom: 40
+      valueRanges:
+      - minValue: -1
+        maxValue: 2
+      internalElements:
+      - valueRanges:
+        - minValue: 0.6
+          maxValue: 0.7
+          sprite: {fileID: 21300000, guid: 4a8b4f83703dd7d479aa769fa2728564, type: 3}
+        - minValue: 0.2
+          maxValue: 0.3
+          sprite: {fileID: 21300000, guid: ed09b8e3236f5d342abb9b7b1c6207bb, type: 3}
+    seed: 0
 --- !u!4 &160321754
 Transform:
   m_ObjectHideFlags: 0
