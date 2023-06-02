@@ -29,13 +29,14 @@ public class WorldGenerator : MonoBehaviour
     [System.Serializable]
     public class LayerData
     {
+        public bool useCustomPerlinNoise;
         public float zoom;
-        public List<RangeSpriteData> valueRanges;
+        public List<ValueRangeData> valueRanges;
         public List<InternalElementData> internalElements;
     }
 
     [System.Serializable]
-    public class RangeSpriteData
+    public class ValueRangeData
     {
         public float minValue;
         public float maxValue;
@@ -44,11 +45,14 @@ public class WorldGenerator : MonoBehaviour
     [System.Serializable]
     public class InternalElementData
     {
-        public List<ValueRangeData> valueRanges;
+        public bool useCustomPerlinNoise;
+        public float customSeed;
+        public float customZoom;
+        public List<RangeSpriteData> valueRanges;
     }
 
     [System.Serializable]
-    public class ValueRangeData
+    public class RangeSpriteData
     {
         public float minValue;
         public float maxValue;
@@ -128,25 +132,34 @@ public class WorldGenerator : MonoBehaviour
 
                                 if (!activeTiles.ContainsKey(tilePosition))
                                 {
-                                    float noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
+                                    float noiseValue;
 
-                                    foreach (RangeSpriteData valueRangeData in layerData.valueRanges)
+                                    if (layerData.useCustomPerlinNoise || internalElement.useCustomPerlinNoise)
                                     {
-                                        if (noiseValue >= valueRangeData.minValue && noiseValue <= valueRangeData.maxValue)
+                                        float customSeed = internalElement.useCustomPerlinNoise ? internalElement.customSeed : biomeData.seed;
+                                        float customZoom = internalElement.useCustomPerlinNoise ? internalElement.customZoom : layerData.zoom;
+                                        noiseValue = Mathf.PerlinNoise((tilePosition.x + customSeed) / customZoom, (tilePosition.z + customSeed) / customZoom);
+                                    }
+                                    else
+                                    {
+                                        noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
+                                    }
+
+                                    Sprite selectedSprite = null;
+                                    foreach (RangeSpriteData rangeSpriteData in internalElement.valueRanges)
+                                    {
+                                        if (noiseValue >= rangeSpriteData.minValue && noiseValue <= rangeSpriteData.maxValue)
                                         {
-                                            // Generate internal elements within the value range
-                                            foreach (ValueRangeData valueRange in internalElement.valueRanges)
-                                            {
-                                                if (noiseValue >= valueRange.minValue && noiseValue <= valueRange.maxValue)
-                                                {
-                                                    GameObject newTile = GetTileFromPool();
-                                                    PlaceTile(newTile, tilePosition, valueRange.sprite);
-                                                    activeTiles.Add(tilePosition, newTile);
-                                                    break;
-                                                }
-                                            }
+                                            selectedSprite = rangeSpriteData.sprite;
                                             break;
                                         }
+                                    }
+
+                                    if (selectedSprite != null)
+                                    {
+                                        GameObject newTile = GetTileFromPool();
+                                        PlaceTile(newTile, tilePosition, selectedSprite);
+                                        activeTiles.Add(tilePosition, newTile);
                                     }
                                 }
                             }
