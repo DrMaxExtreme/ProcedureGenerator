@@ -157,62 +157,22 @@ MonoBehaviour:
   generationDistance: 75
   deactivationDistance: 100
   tilePoolSize: 10000
-  biomes:
-  - biomeName: Ground
-    layers:
-    - zoom: 60
-      internalElements:
-      - valueRanges:
-        - minValue: 0.25
-          maxValue: 0.3
-          sprite: {fileID: 21300000, guid: ed09b8e3236f5d342abb9b7b1c6207bb, type: 3}
-        - minValue: 0.2
-          maxValue: 0.25
-          sprite: {fileID: 21300000, guid: 511e4b092ed88d346b6ae97758fbef51, type: 3}
-        - minValue: 0.15
-          maxValue: 0.2
-          sprite: {fileID: 21300000, guid: 84a91b6e801b5fe4385f9e9683ffbb88, type: 3}
-        - minValue: 0.05
-          maxValue: 0.15
-          sprite: {fileID: 21300000, guid: a05333353029fe544956ae38a3054e04, type: 3}
-        - minValue: -1
-          maxValue: 0.05
-          sprite: {fileID: 21300000, guid: 336769327d23cf847991f0d765833308, type: 3}
-    - zoom: 45
-      internalElements:
-      - valueRanges:
-        - minValue: -1
-          maxValue: 0.1
-          sprite: {fileID: 21300000, guid: ec90fed8097534446afd363c98231cff, type: 3}
-        - minValue: 0.9
-          maxValue: 2
-          sprite: {fileID: 21300000, guid: ec90fed8097534446afd363c98231cff, type: 3}
-    - zoom: 40
-      internalElements:
-      - valueRanges:
-        - minValue: -1
-          maxValue: 0.15
-          sprite: {fileID: 21300000, guid: e62c8428275b0184c8a5fdd0853da112, type: 3}
-      - valueRanges:
-        - minValue: 0.9
-          maxValue: 2
-          sprite: {fileID: 21300000, guid: fed5d03f4fb55d342a2cdbdc5399140d, type: 3}
-    - zoom: 15
-      internalElements:
-      - valueRanges:
-        - minValue: -1
-          maxValue: 0.15
-          sprite: {fileID: 21300000, guid: 511e4b092ed88d346b6ae97758fbef51, type: 3}
-        - minValue: 0.9
-          maxValue: 2
-          sprite: {fileID: 21300000, guid: 10f36107ba3dd6f41a4c9dc2f56701bb, type: 3}
-    - zoom: 1
-      internalElements:
-      - valueRanges:
-        - minValue: -1
-          maxValue: 2
-          sprite: {fileID: 21300000, guid: ed09b8e3236f5d342abb9b7b1c6207bb, type: 3}
-    seed: 0
+  layers:
+  - layerName: Water
+    zoom: 40
+    elements: []
+  - layerName: 
+    zoom: 0
+    elements: []
+  - layerName: 
+    zoom: 0
+    elements: []
+  - layerName: Grass
+    zoom: 30
+    elements:
+    - minValue: -1
+      maxValue: 0.5
+      sprite: {fileID: 21300000, guid: ed09b8e3236f5d342abb9b7b1c6207bb, type: 3}
 --- !u!4 &160321754
 Transform:
   m_ObjectHideFlags: 0

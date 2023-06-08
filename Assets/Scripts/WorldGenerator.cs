@@ -9,45 +9,24 @@ public class WorldGenerator : MonoBehaviour
     public float generationDistance = 10f;
     public float deactivationDistance = 30f;
     public int tilePoolSize = 1000;
-    public List<BiomeData> biomes;
+    public List<Layer> layers;
 
     private List<GameObject> tilePool;
     private Dictionary<Vector3, GameObject> activeTiles;
     private Vector3 lastPlayerTilePosition;
     private Queue<GameObject> inactiveTiles = new Queue<GameObject>();
+    private int seed;
 
     [System.Serializable]
-    public class BiomeData
+    public class Layer
     {
-        public string biomeName;
-        public List<LayerData> layers;
-
-        [HideInInspector]
-        public float seed;
-    }
-
-    [System.Serializable]
-    public class LayerData
-    {
+        public string layerName;
         public float zoom;
-        public List<InternalElementData> internalElements;
+        public List<LayerElement> elements;
     }
 
     [System.Serializable]
-    public class ValueRangeData
-    {
-        public float minValue;
-        public float maxValue;
-    }
-
-    [System.Serializable]
-    public class InternalElementData
-    {
-        public List<RangeSpriteData> valueRanges;
-    }
-
-    [System.Serializable]
-    public class RangeSpriteData
+    public class LayerElement
     {
         public float minValue;
         public float maxValue;
@@ -59,6 +38,7 @@ public class WorldGenerator : MonoBehaviour
         tilePool = new List<GameObject>();
         activeTiles = new Dictionary<Vector3, GameObject>();
         lastPlayerTilePosition = Vector3.negativeInfinity;
+        seed = Mathf.RoundToInt(Random.Range(2500000f, 7500000f));
 
         for (int i = 0; i < tilePoolSize; i++)
         {
@@ -105,46 +85,35 @@ public class WorldGenerator : MonoBehaviour
             float horizontalDistance = distance * 2;
             float verticalDistance = distance;
 
-            foreach (BiomeData biomeData in biomes)
+            foreach (Layer layer in layers)
             {
-                if (biomeData.seed == 0f)
+                foreach (LayerElement element in layer.elements)
                 {
-                    biomeData.seed = Random.Range(2500000f, 7500000f);
-                }
-
-                foreach (LayerData layerData in biomeData.layers)
-                {
-                    foreach (InternalElementData internalElement in layerData.internalElements)
+                    for (int x = (int)currentPlayerIntPosition.x - (int)horizontalDistance; x <= (int)currentPlayerIntPosition.x + (int)horizontalDistance; x++)
                     {
-                        if (internalElement.valueRanges == null || internalElement.valueRanges.Count == 0)
-                            continue;
-
-                        for (int x = (int)currentPlayerIntPosition.x - (int)horizontalDistance; x <= (int)currentPlayerIntPosition.x + (int)horizontalDistance; x++)
+                        for (int z = (int)currentPlayerIntPosition.z - (int)verticalDistance; z <= (int)currentPlayerIntPosition.z + (int)verticalDistance; z++)
                         {
-                            for (int z = (int)currentPlayerIntPosition.z - (int)verticalDistance; z <= (int)currentPlayerIntPosition.z + (int)verticalDistance; z++)
+                            Vector3 tilePosition = new Vector3(x, 0, z);
+
+                            if (!activeTiles.ContainsKey(tilePosition))
                             {
-                                Vector3 tilePosition = new Vector3(x, 0, z);
+                                float noiseValue = Mathf.PerlinNoise((tilePosition.x + seed) / layer.zoom, (tilePosition.z + seed) / layer.zoom);
 
-                                if (!activeTiles.ContainsKey(tilePosition))
+                                Sprite selectedSprite = null;
+                                foreach (LayerElement rangeSpriteData in layer.elements)
                                 {
-                                    float noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
-
-                                    Sprite selectedSprite = null;
-                                    foreach (RangeSpriteData rangeSpriteData in internalElement.valueRanges)
+                                    if (noiseValue >= rangeSpriteData.minValue && noiseValue <= rangeSpriteData.maxValue)
                                     {
-                                        if (noiseValue >= rangeSpriteData.minValue && noiseValue <= rangeSpriteData.maxValue)
-                                        {
-                                            selectedSprite = rangeSpriteData.sprite;
-                                            break;
-                                        }
+                                        selectedSprite = rangeSpriteData.sprite;
+                                        break;
                                     }
+                                }
 
-                                    if (selectedSprite != null)
-                                    {
-                                        GameObject newTile = GetTileFromPool();
-                                        PlaceTile(newTile, tilePosition, selectedSprite);
-                                        activeTiles.Add(tilePosition, newTile);
-                                    }
+                                if (selectedSprite != null)
+                                {
+                                    GameObject newTile = GetTileFromPool();
+                                    PlaceTile(newTile, tilePosition, selectedSprite);
+                                    activeTiles.Add(tilePosition, newTile);
                                 }
                             }
                         }
