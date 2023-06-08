@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Arcade Idle Components/Example Game/Scenes/Main.unity
+    guid: 95fe17c778366d542af8ce1168869ba8
   m_configObjects: {}
