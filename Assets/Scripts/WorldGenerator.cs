@@ -35,8 +35,8 @@ public class WorldGenerator : MonoBehaviour
 
     private void Start()
     {
-        tilePool = new List<GameObject>();
-        activeTiles = new Dictionary<Vector3, GameObject>();
+        tilePool = new List<GameObject>(tilePoolSize);
+        activeTiles = new Dictionary<Vector3, GameObject>(tilePoolSize);
         lastPlayerTilePosition = Vector3.negativeInfinity;
         seed = Mathf.RoundToInt(Random.Range(2500000f, 7500000f));
 
@@ -79,48 +79,47 @@ public class WorldGenerator : MonoBehaviour
     private void GenerateTilesAroundPosition(Vector3 position, float distance)
     {
         Vector3 currentPlayerIntPosition = new Vector3(Mathf.Floor(position.x), 0, Mathf.Floor(position.z));
+        float horizontalDistance = distance * 2;
+        float verticalDistance = distance;
 
-        if (currentPlayerIntPosition != WorldToTilePosition(lastPlayerTilePosition))
+        foreach (Layer layer in layers)
         {
-            float horizontalDistance = distance * 2;
-            float verticalDistance = distance;
-
-            foreach (Layer layer in layers)
+            foreach (LayerElement element in layer.elements)
             {
-                foreach (LayerElement element in layer.elements)
+                for (int x = (int)currentPlayerIntPosition.x - (int)horizontalDistance; x <= (int)currentPlayerIntPosition.x + (int)horizontalDistance; x++)
                 {
-                    for (int x = (int)currentPlayerIntPosition.x - (int)horizontalDistance; x <= (int)currentPlayerIntPosition.x + (int)horizontalDistance; x++)
+                    for (int z = (int)currentPlayerIntPosition.z - (int)verticalDistance; z <= (int)currentPlayerIntPosition.z + (int)verticalDistance; z++)
                     {
-                        for (int z = (int)currentPlayerIntPosition.z - (int)verticalDistance; z <= (int)currentPlayerIntPosition.z + (int)verticalDistance; z++)
+                        Vector3 tilePosition = new Vector3(x, 0, z);
+
+                        if (!activeTiles.ContainsKey(tilePosition))
                         {
-                            Vector3 tilePosition = new Vector3(x, 0, z);
+                            float noiseValue = Mathf.PerlinNoise((tilePosition.x + seed) / layer.zoom, (tilePosition.z + seed) / layer.zoom);
+                            Sprite selectedSprite = GetSelectedSprite(noiseValue, layer.elements);
 
-                            if (!activeTiles.ContainsKey(tilePosition))
+                            if (selectedSprite != null)
                             {
-                                float noiseValue = Mathf.PerlinNoise((tilePosition.x + seed) / layer.zoom, (tilePosition.z + seed) / layer.zoom);
-
-                                Sprite selectedSprite = null;
-                                foreach (LayerElement rangeSpriteData in layer.elements)
-                                {
-                                    if (noiseValue >= rangeSpriteData.minValue && noiseValue <= rangeSpriteData.maxValue)
-                                    {
-                                        selectedSprite = rangeSpriteData.sprite;
-                                        break;
-                                    }
-                                }
-
-                                if (selectedSprite != null)
-                                {
-                                    GameObject newTile = GetTileFromPool();
-                                    PlaceTile(newTile, tilePosition, selectedSprite);
-                                    activeTiles.Add(tilePosition, newTile);
-                                }
+                                GameObject newTile = GetTileFromPool();
+                                PlaceTile(newTile, tilePosition, selectedSprite);
+                                activeTiles.Add(tilePosition, newTile);
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private Sprite GetSelectedSprite(float noiseValue, List<LayerElement> elements)
+    {
+        foreach (LayerElement rangeSpriteData in elements)
+        {
+            if (noiseValue >= rangeSpriteData.minValue && noiseValue <= rangeSpriteData.maxValue)
+            {
+                return rangeSpriteData.sprite;
+            }
+        }
+        return null;
     }
 
     private void DeactivateTilesOutsideDistance()
