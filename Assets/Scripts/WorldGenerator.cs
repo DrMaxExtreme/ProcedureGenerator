@@ -29,9 +29,7 @@ public class WorldGenerator : MonoBehaviour
     [System.Serializable]
     public class LayerData
     {
-        public bool useCustomPerlinNoise;
         public float zoom;
-        public List<ValueRangeData> valueRanges;
         public List<InternalElementData> internalElements;
     }
 
@@ -45,9 +43,6 @@ public class WorldGenerator : MonoBehaviour
     [System.Serializable]
     public class InternalElementData
     {
-        public bool useCustomPerlinNoise;
-        public float customSeed;
-        public float customZoom;
         public List<RangeSpriteData> valueRanges;
     }
 
@@ -132,18 +127,7 @@ public class WorldGenerator : MonoBehaviour
 
                                 if (!activeTiles.ContainsKey(tilePosition))
                                 {
-                                    float noiseValue;
-
-                                    if (layerData.useCustomPerlinNoise || internalElement.useCustomPerlinNoise)
-                                    {
-                                        float customSeed = internalElement.useCustomPerlinNoise ? internalElement.customSeed : biomeData.seed;
-                                        float customZoom = internalElement.useCustomPerlinNoise ? internalElement.customZoom : layerData.zoom;
-                                        noiseValue = Mathf.PerlinNoise((tilePosition.x + customSeed) / customZoom, (tilePosition.z + customSeed) / customZoom);
-                                    }
-                                    else
-                                    {
-                                        noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
-                                    }
+                                    float noiseValue = Mathf.PerlinNoise((tilePosition.x + biomeData.seed) / layerData.zoom, (tilePosition.z + biomeData.seed) / layerData.zoom);
 
                                     Sprite selectedSprite = null;
                                     foreach (RangeSpriteData rangeSpriteData in internalElement.valueRanges)
@@ -222,7 +206,6 @@ public class WorldGenerator : MonoBehaviour
         tile.SetActive(true);
         tile.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
-        // Set the sprite
         SpriteRenderer spriteRenderer = tile.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = sprite;
     }
