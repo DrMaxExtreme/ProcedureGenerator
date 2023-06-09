@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public Transform cameraTransform;
     public float smoothRotationSpeed = 5f;
-    public float cameraFollowSpeed = 5f;
+    public float maxCameraDistance = 10f;
 
     private Vector3 cameraOffset;
 
@@ -38,20 +38,27 @@ public class PlayerController : MonoBehaviour
     {
         if (cameraTransform != null)
         {
-            // Calculate the target position for the camera based on the player's position and offset
             Vector3 targetCameraPosition = transform.position + cameraOffset;
 
-            // Calculate the direction from the camera position to the player position
-            Vector3 cameraToPlayerDirection = transform.position - cameraTransform.position;
+            targetCameraPosition = LimitCameraDistance(targetCameraPosition);
 
-            // Calculate the target rotation for the camera to look directly at the player
-            Quaternion targetCameraRotation = Quaternion.LookRotation(cameraToPlayerDirection, Vector3.up);
+            cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetCameraPosition, smoothRotationSpeed * Time.deltaTime);
 
-            // Move the camera towards the target position smoothly with the specified follow speed
-            cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetCameraPosition, cameraFollowSpeed * Time.deltaTime);
-
-            // Rotate the camera towards the target rotation smoothly
-            cameraTransform.rotation = Quaternion.Slerp(cameraTransform.rotation, targetCameraRotation, smoothRotationSpeed * Time.deltaTime);
+            cameraTransform.LookAt(transform);
         }
+    }
+
+    private Vector3 LimitCameraDistance(Vector3 targetPosition)
+    {
+        float distance = Vector3.Distance(targetPosition, transform.position);
+
+        if (distance > maxCameraDistance)
+        {
+            Vector3 direction = targetPosition - transform.position;
+
+            targetPosition = transform.position + direction.normalized * maxCameraDistance;
+        }
+
+        return targetPosition;
     }
 }
