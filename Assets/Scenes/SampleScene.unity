@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -156,8 +156,9 @@ MonoBehaviour:
   tilePrefabs:
   - {fileID: 2965586213671339217, guid: 5fc42b75391e69443a695f83a9197ae4, type: 3}
   - {fileID: 2965586213671339217, guid: bf7dda25132f33f40aee103821ea6666, type: 3}
-  generationRadius: 50
-  deactivationRadius: 250
+  - {fileID: 2965586213671339217, guid: 81cd5719fc529774da2ba9a3fe35126f, type: 3}
+  generationRadius: 75
+  deactivationRadius: 200
   tilePoolSize: 100
   tileSize: 25
   updateInterval: 1
