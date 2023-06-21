@@ -5,14 +5,17 @@ public class WorldGenerator : MonoBehaviour
 {
     public Transform playerTransform;
     public List<GameObject> tilePrefabs;
-    public float generationRadius = 10f;
-    public float deactivationRadius = 30f;
-    public int tilePoolSize = 1000;
+    public float generationRadius = 50f;
+    public float deactivationRadius = 100f;
+    public int tilePoolSize = 100;
     public float tileSize = 25f;
+    public float updateInterval = 1f;
 
     private List<GameObject> tilePool;
     private Dictionary<Vector3, GameObject> activeTiles;
     private Queue<GameObject> inactiveTiles = new Queue<GameObject>();
+    private float timer;
+    private bool canUpdateTiles = true;
 
     private void Start()
     {
@@ -32,8 +35,17 @@ public class WorldGenerator : MonoBehaviour
 
     private void Update()
     {
-        GenerateTiles();
-        DeactivateTiles();
+        if (!canUpdateTiles)
+            return;
+
+        timer += Time.deltaTime;
+
+        if (timer >= updateInterval)
+        {
+            GenerateTiles();
+            DeactivateTiles();
+            timer = 0f;
+        }
     }
 
     private void GenerateTiles()
@@ -114,5 +126,9 @@ public class WorldGenerator : MonoBehaviour
             0f,
             Mathf.Floor(worldPosition.z / tileSize) * tileSize
         );
+    }
+    public void SetTileUpdatesEnabled(bool enabled)
+    {
+        canUpdateTiles = enabled;
     }
 }
