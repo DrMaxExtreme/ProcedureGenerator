@@ -8,38 +8,38 @@ public class CameraFollow2D : MonoBehaviour
 
     private void Awake()
     {
-        if (this.playerTransform == null)
+        if (playerTransform == null)
         {
-            if (this.playerTag == "")
+            if (playerTag == "")
             {
-                this.playerTag = "Player";
+                playerTag = "Player";
             }
 
-            this.playerTransform = GameObject.FindGameObjectWithTag(this.playerTag).transform;
+            playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
         }
 
-        this.transform.position = new Vector3()
+        transform.position = new Vector3()
         {
-            x = this.playerTransform.position.x,
-            y = this.playerTransform.position.y + 3,
-            z = this.playerTransform.position.z - 2,
+            x = playerTransform.position.x,
+            y = playerTransform.position.y + 3,
+            z = playerTransform.position.z - 2,
         };
     }
 
     private void Update()
     {
-        if (this.playerTransform)
+        if (playerTransform)
         {
             Vector3 target = new Vector3()
             {
-                x = this.playerTransform.position.x,
-                y = this.playerTransform.position.y + 3,
-                z = this.playerTransform.position.z - 2,
+                x = playerTransform.position.x,
+                y = playerTransform.position.y + 3,
+                z = playerTransform.position.z - 2,
             };
 
-            Vector3 pos = Vector3.Lerp(this.transform.position, target, this.movingSpeed * Time.deltaTime);
+            Vector3 pos = Vector3.Lerp(transform.position, target, movingSpeed * Time.deltaTime);
 
-            this.transform.position = pos;
+            transform.position = pos;
         }
     }
 

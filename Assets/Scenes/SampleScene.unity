@@ -155,7 +155,8 @@ MonoBehaviour:
   playerTransform: {fileID: 1658093694}
   tilePrefabs:
   - {fileID: 2965586213671339217, guid: 5fc42b75391e69443a695f83a9197ae4, type: 3}
-  generationRadius: 25
+  - {fileID: 2965586213671339217, guid: bf7dda25132f33f40aee103821ea6666, type: 3}
+  generationRadius: 50
   deactivationRadius: 250
   tilePoolSize: 100
   tileSize: 25
@@ -242,7 +243,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6f04cb763136a274b85ca16db18b5bc7, type: 2}
+  - {fileID: 2100000, guid: 5ed44664bc655d846a927c8604895225, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
