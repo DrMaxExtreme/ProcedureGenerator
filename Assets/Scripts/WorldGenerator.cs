@@ -3,68 +3,71 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
-    public Transform playerTransform;
-    public List<GameObject> tilePrefabs;
-    public float generationRadius = 50f;
-    public float deactivationRadius = 100f;
-    public int tilePoolSize = 100;
-    public float tileSize = 25f;
-    public float updateInterval = 1f;
+    [SerializeField] private Transform _playerTransform;
+    [SerializeField] private List<GameObject> _tilePrefabs;
+    [SerializeField] private float _generationRadius;
+    [SerializeField] private float _deactivationRadius;
+    [SerializeField] private int _tilePoolSize;
+    [SerializeField] private float _tileSize;
+    [SerializeField] private float _updateInterval;
 
-    private List<GameObject> tilePool;
-    private Dictionary<Vector3, GameObject> activeTiles;
-    private Queue<GameObject> inactiveTiles = new Queue<GameObject>();
-    private float timer;
-    private bool canUpdateTiles = true;
+    private List<GameObject> _tilePool;
+    private Dictionary<Vector3, GameObject> _activeTiles;
+    private Queue<GameObject> _inactiveTiles = new Queue<GameObject>();
+    private float _timer;
+    private bool _canUpdateTiles = true;
+
+    private const float CountRotateOptionsTile = 4f;
+    private const float AngleStepRotateTile = 90f;
 
     private void Start()
     {
-        tilePool = new List<GameObject>(tilePoolSize);
-        activeTiles = new Dictionary<Vector3, GameObject>(tilePoolSize);
+        _tilePool = new List<GameObject>(_tilePoolSize);
+        _activeTiles = new Dictionary<Vector3, GameObject>(_tilePoolSize);
 
-        for (int i = 0; i < tilePoolSize; i++)
+        for (int i = 0; i < _tilePoolSize; i++)
         {
-            GameObject newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Count)], transform);
+            GameObject newTile = Instantiate(_tilePrefabs[Random.Range(0, _tilePrefabs.Count)], transform);
             newTile.SetActive(false);
-            tilePool.Add(newTile);
-            inactiveTiles.Enqueue(newTile);
+            _tilePool.Add(newTile);
+            _inactiveTiles.Enqueue(newTile);
         }
 
         GenerateTiles();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (!canUpdateTiles)
+        if (!_canUpdateTiles)
             return;
 
-        timer += Time.deltaTime;
+        _timer += Time.deltaTime;
 
-        if (timer >= updateInterval)
+        if (_timer >= _updateInterval)
         {
             GenerateTiles();
             DeactivateTiles();
-            timer = 0f;
+            _timer = 0f;
         }
     }
 
     private void GenerateTiles()
     {
-        Vector3 currentPlayerTilePosition = WorldToTilePosition(playerTransform.position);
-        int horizontalTiles = Mathf.CeilToInt(generationRadius / tileSize);
-        int verticalTiles = Mathf.CeilToInt(generationRadius / tileSize);
+        Vector3 currentPlayerTilePosition = WorldToTilePosition(_playerTransform.position);
+        int horizontalTiles = Mathf.CeilToInt(_generationRadius / _tileSize);
+        int verticalTiles = Mathf.CeilToInt(_generationRadius / _tileSize);
 
         for (int x = -horizontalTiles; x <= horizontalTiles; x++)
         {
             for (int z = -verticalTiles; z <= verticalTiles; z++)
             {
-                Vector3 tilePosition = currentPlayerTilePosition + new Vector3(x * tileSize, 0, z * tileSize);
+                Vector3 tilePosition = currentPlayerTilePosition + new Vector3(x * _tileSize, 0, z * _tileSize);
 
-                if (!activeTiles.ContainsKey(tilePosition))
+                if (!_activeTiles.ContainsKey(tilePosition))
                 {
                     GameObject newTile = GetTileFromPool();
                     PlaceTile(newTile, tilePosition);
-                    activeTiles.Add(tilePosition, newTile);
+                    _activeTiles.Add(tilePosition, newTile);
                 }
             }
         }
@@ -72,17 +75,17 @@ public class WorldGenerator : MonoBehaviour
 
     private void DeactivateTiles()
     {
-        int horizontalTiles = Mathf.CeilToInt(deactivationRadius / tileSize);
-        int verticalTiles = Mathf.CeilToInt(deactivationRadius / tileSize);
+        int horizontalTiles = Mathf.CeilToInt(_deactivationRadius / _tileSize);
+        int verticalTiles = Mathf.CeilToInt(_deactivationRadius / _tileSize);
 
         List<Vector3> tilesToDeactivate = new List<Vector3>();
 
-        foreach (KeyValuePair<Vector3, GameObject> tileEntry in activeTiles)
+        foreach (KeyValuePair<Vector3, GameObject> tileEntry in _activeTiles)
         {
             Vector3 tilePosition = tileEntry.Key;
 
-            if (Mathf.Abs(tilePosition.x - playerTransform.position.x) > horizontalTiles * tileSize ||
-                Mathf.Abs(tilePosition.z - playerTransform.position.z) > verticalTiles * tileSize)
+            if (Mathf.Abs(tilePosition.x - _playerTransform.position.x) > horizontalTiles * _tileSize ||
+                Mathf.Abs(tilePosition.z - _playerTransform.position.z) > verticalTiles * _tileSize)
             {
                 tilesToDeactivate.Add(tilePosition);
             }
@@ -90,45 +93,45 @@ public class WorldGenerator : MonoBehaviour
 
         foreach (Vector3 tilePosition in tilesToDeactivate)
         {
-            GameObject tileToDeactivate = activeTiles[tilePosition];
-            activeTiles.Remove(tilePosition);
+            GameObject tileToDeactivate = _activeTiles[tilePosition];
+            _activeTiles.Remove(tilePosition);
             ReturnTileToPool(tileToDeactivate);
         }
     }
 
     private GameObject GetTileFromPool()
     {
-        if (inactiveTiles.Count > 0)
-            return inactiveTiles.Dequeue();
+        if (_inactiveTiles.Count > 0)
+            return _inactiveTiles.Dequeue();
 
-        GameObject newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Count)], transform);
-        tilePool.Add(newTile);
+        GameObject newTile = Instantiate(_tilePrefabs[Random.Range(0, _tilePrefabs.Count)], transform);
+        _tilePool.Add(newTile);
         return newTile;
     }
 
     private void ReturnTileToPool(GameObject tile)
     {
         tile.SetActive(false);
-        inactiveTiles.Enqueue(tile);
+        _inactiveTiles.Enqueue(tile);
     }
 
     private void PlaceTile(GameObject tile, Vector3 position)
     {
         tile.transform.position = position;
         tile.SetActive(true);
-        tile.transform.rotation = Quaternion.Euler(0f, Random.Range(0, 4) * 90f, 0f);
+        tile.transform.rotation = Quaternion.Euler(0f, Random.Range(0, CountRotateOptionsTile) * AngleStepRotateTile, 0f);
     }
 
     private Vector3 WorldToTilePosition(Vector3 worldPosition)
     {
         return new Vector3(
-            Mathf.Floor(worldPosition.x / tileSize) * tileSize,
+            Mathf.Floor(worldPosition.x / _tileSize) * _tileSize,
             0f,
-            Mathf.Floor(worldPosition.z / tileSize) * tileSize
+            Mathf.Floor(worldPosition.z / _tileSize) * _tileSize
         );
     }
     public void SetTileUpdatesEnabled(bool enabled)
     {
-        canUpdateTiles = enabled;
+        _canUpdateTiles = enabled;
     }
 }
